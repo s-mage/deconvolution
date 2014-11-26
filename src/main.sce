@@ -19,7 +19,21 @@ function ir_inversion(ir, n)
   result(1) = 1 / ir(1);
   for k = 1:(n - 1)
     ir_limited = ir(1:k);
-    ir_limited_reversed = ir_limited(k:-1:1)'; // this is how to reverse vector in scilab, no matter.
+    ir_limited_reversed = ir_limited(:,$:-1:1)'; // this is how to reverse vector in scilab, no matter.
     result(k + 1) = 1 / ir(1) * (result(1:k) * ir_limited_reversed);
   end
 endfunction
+
+iri = ir_inversion(ir, size(ir, 2))
+ir_convolution = convol(ir, iri) // should be [1, 0, ..., 0]
+
+// Create discrete signal with noize.
+//
+signal = initial_signal(t);
+noize = grand(1, size(t, 2), 'nor', 0, sigma);
+noized_signal = signal + noize;
+
+convolved_signal = convol(noized_signal, impulse_responce);
+
+// Deconvolution is just convolution with reverse-filter, so:
+deconvolved_signal = convol(convolved_signal, iri);
