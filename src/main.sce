@@ -30,8 +30,7 @@ function result = initial_signal(t)
 endfunction
 
 function check_roots(impulse_responce)
-  ir_polynom = poly(impulse_responce, 'x', 'coeff');
-  ir_roots = roots(ir_polynom);
+  ir_roots = roots(poly(impulse_responce, 'x', 'coeff'));
   ir_roots_modules = (real(ir_roots) .^ 2 + imag(ir_roots) .^ 2) .^ 0.5;
   if find(ir_root_modules < 1) then
     disp("You have roots of impulse response that smaller than 1. Bad news, filter will be unstable");
@@ -50,7 +49,6 @@ noize = grand(1, size(t, 2), 'nor', 0, sigma);
 noized_signal = signal + noize;
 convolved_signal = convol(noized_signal, impulse_responce);
 
-// Deconvolution is just convolution with reverse-filter, so:
 deconvolved_signal = deconvolution(convolved_signal, impulse_responce);
 deconvolved_signal = deconvolved_signal(1:size(t, 2));
 figure(); plot2d(t, deconvolved_signal); xtitle("Deconvolved signal");
